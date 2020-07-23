@@ -1,0 +1,90 @@
+<html>
+<head>
+  <title>Headless news</title>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/tachyons/css/tachyons.min.css">
+</head>
+<body class="w-100 sans-serif cf ph3 ph5-ns pb5 bg-yellow black-70">
+<div id="app">
+  <h1 class="f-headline-ns f1 lh-solid mb2">Headless News</h1>
+  <router-view></router-view>
+</div>
+<script>
+  const API_ROOT = 'http://127.0.0.1:8000/api/v2/pages/';
+  /* News listing component */
+  const NewsListing = {
+    template: `
+      <div>
+        <div v-for="item in news">
+          <router-link class="black dim" :to="/news/+ item.id">
+            <h2>{{ item.title }}</h2>
+          </router-link>
+          <p>{{ item.intro }} / {{ item.date }}</p>
+        </div>
+      </div>
+      `,
+    data: function() {
+      return {news: []};
+    },
+    mounted() {
+      axios.get(API_ROOT + '?type=news.NewsPage&fields=intro,body,date').
+        then(response => (this.news = response.data.items));
+    },
+  };
+  /* News item component */
+  const NewsItem = {
+    template: `
+        <div>
+          <router-link class="black dim" to="/">Home</router-link>
+          <h1>{{ item.title }}</h1>
+          <span v-for="block in item.body">
+        <div v-if="block.type == 'heading'">
+            <h2>{{ block.value }}</h2>
+        </div>
+        <div v-else-if="block.type == 'image'">
+            <h2>image: {{ block.value }}</h2>
+        </div>
+        <div v-else-if="block.type == 'paragraph'">
+            <p v-html="block.value"></p>
+        </div>
+    </span>
+          <img v-if="item.image_thumbnail"
+            :src="'http://127.0.0.1:8000' + item.image_thumbnail.url"
+            :width="item.image_thumbnail.width"
+            :height="item.image_thumbnail.height">
+        </div>
+      `,
+    data: function() {
+      return {item: {}};
+    },
+    methods: {
+      getNews() {
+        axios.get(API_ROOT + this.$route.params.id + '/').then((response) => (this.item = response.data));
+      },
+    },
+    mounted() {
+      this.getNews();
+    },
+    watch: {
+      '$route'(to, from) {
+        this.getNews();
+      },
+    },
+  };
+  const routes = [
+    {path: '/', component: NewsListing},
+    {path: '/news/:id', component: NewsItem},
+  ];
+  const router = new VueRouter({
+    routes,
+  });
+  const app = new Vue({
+    router,
+  }).$mount('#app');
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<html>
+<head>
+  <title>Workshop People</title>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <h1>Workshop People</h1>
+  <ul>
+    <li v-for="person in people">
+      {{ person.name }}
+    </li>
+  </ul>
+</div>
+<script>
+  const app = new Vue({
+    el: '#app',
+    data() {
+      return {
+        people: [],
+      };
+    },
+    mounted() {
+      axios.get('https://api.myjson.com/bins/uvhb9').then(response => (this.people = response.data));
+    },
+  });
+</script>
+</body>
+</html>

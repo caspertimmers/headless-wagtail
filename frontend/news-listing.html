@@ -1,0 +1,31 @@
+<html>
+<head>
+  <title>Headless news</title>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <h1>Headless news</h1>
+  <div v-for="item in news">
+    <h2>{{ item.title }}</h2>
+    <p>{{ item.intro }}</p>
+  </div>
+</div>
+<script>
+  const app = new Vue({
+    el: '#app',
+    data() {
+      return {
+        news: [],
+      };
+    },
+    mounted() {
+      axios.get('http://127.0.0.1:8000/api/v2/pages/?type=news.NewsPage&fields=intro,body').
+        then(response => (this.news = response.data.items));
+    },
+  });
+</script>
+</body>
+</html>
