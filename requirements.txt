@@ -1,5 +1,5 @@
 wagtail==2.9
-Django==3.0
+Django==3.0.7
 psycopg2-binary==2.8.5
 django-cors-headers==3.4.0
 wagtail-headless-preview==0.1.4
