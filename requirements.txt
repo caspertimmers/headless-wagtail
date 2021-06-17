@@ -1,4 +1,4 @@
-wagtail==2.9
+wagtail==2.11.8
 Django==3.0
 psycopg2-binary==2.8.5
 django-cors-headers==3.4.0
